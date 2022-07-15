@@ -1,0 +1,45 @@
+#######################################
+# Syntax LCD1202
+#######################################
+
+#######################################
+# Class
+#######################################
+
+LCD1202	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+Inicialize	KEYWORD2
+Clear_LCD	KEYWORD2
+Update	KEYWORD2
+drawPixel	KEYWORD2
+dWrite	KEYWORD2
+SendByte	KEYWORD2
+fillScreen	KEYWORD2
+drawChar	KEYWORD2
+drawString	KEYWORD2
+print KEYWORD2
+print_1607	KEYWORD2
+drawLine	KEYWORD2
+drawFastVLine	KEYWORD2
+drawFastHLine	KEYWORD2
+drawRect	KEYWORD2
+drawCircle	KEYWORD2
+drawRoundRect	KEYWORD2
+drawTriangle	KEYWORD2
+drawCircleHelper	KEYWORD2
+fillCircle	KEYWORD2
+fillCircleHelper	KEYWORD2
+fillRect	KEYWORD2
+fillRoundRect	KEYWORD2
+fillTriangle	KEYWORD2
+drawBitmap	KEYWORD2
+simb16x32	KEYWORD2
+simb10x16	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+####################################### 
