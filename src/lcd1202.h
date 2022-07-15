@@ -41,6 +41,6 @@ class LCD1202 {
        void Print_LCD(char* message);
   private:
        void dWrite(byte pin, byte val);
-       void sendChar(byte mode, byte c);
+       void SendByte(byte mode, byte c);
 };
 #endif
