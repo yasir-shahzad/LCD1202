@@ -25,7 +25,7 @@ byte LCD_RAM[LCD_X*LCD_String];
 
 volatile uint8_t RES, CS, Data, Clock;
 
-//======================================================Определение пинов подключения дисплея
+
 LCD1202::LCD1202(uint8_t _RES, uint8_t _CS, uint8_t _Data, uint8_t _Clock) {
     RES = _RES;
     CS = _CS;
@@ -33,13 +33,13 @@ LCD1202::LCD1202(uint8_t _RES, uint8_t _CS, uint8_t _Data, uint8_t _Clock) {
     Clock = _Clock;
   }
  
-//======================================================Очистка дисплея
+
 void LCD1202::Clear_LCD() {
   for (int index = 0; index < 864 ; index++){
      LCD_RAM[index] = (0x00);
   }
 }
-//=======================================================Управление пинами  
+
 void LCD1202::dWrite(byte pin, byte val){
   digitalWrite(pin, val);
  // byte bit = digitalPinToBitMask(pin);
@@ -48,7 +48,7 @@ void LCD1202::dWrite(byte pin, byte val){
  // (val)? *out |= bit : *out &=~bit;
 }
 
-//=========================================================Отправка 9 байт    
+ 
 void LCD1202::SendByte(byte mode, byte c){
   dWrite(CS, 0);
   (mode)? dWrite(Data,1) : dWrite(Data,0);
@@ -63,7 +63,7 @@ void LCD1202::SendByte(byte mode, byte c){
 
   dWrite(Clock, 0);
 }
-//=====================================================Обновить дисплей
+
 void LCD1202::Update(){
   for(byte p = 0; p < 9; p++){
     SendByte(LCD_C, SetYAddr| p); 
@@ -76,14 +76,13 @@ void LCD1202::Update(){
   }
 }
 
-//===================================================Инициализация дисплея
+
 void LCD1202::Inicialize(){
   pinMode(RES,   OUTPUT);
   pinMode(CS,    OUTPUT);
   pinMode(Data,  OUTPUT);
   pinMode(Clock, OUTPUT);
 
-  // Инициализация дисплея
   dWrite(RES, 1);
   dWrite(Clock, 0);
   dWrite(Data, 0);
@@ -98,7 +97,6 @@ void LCD1202::Inicialize(){
   Update();
 }
 
-//===================================================Нарисовать пиксель
 void LCD1202::drawPixel (byte x, byte y, boolean color) {
   if ((x < 0) || (x >= LCD_X) || (y < 0) || (y >= LCD_Y)) return;
 
@@ -106,12 +104,12 @@ void LCD1202::drawPixel (byte x, byte y, boolean color) {
   else       LCD_RAM[x+ (y/8)*LCD_X] &= ~_BV(y%8); 
 }
 
-//**********************************************************************************************************//
-//======================================================Заливка экрана
+
 void LCD1202::fillScreen(boolean color) {
   fillRect(0, 0, LCD_X, LCD_Y, color);
 }
-//=====================================================Нарисовать букву
+
+
 void LCD1202::drawChar(byte x, byte y, boolean color, unsigned char c) {
 
   if((x >= LCD_X) ||(y >= LCD_Y) || ((x + 4) < 0) || ((y + 7) < 0))
@@ -133,7 +131,7 @@ void LCD1202::drawChar(byte x, byte y, boolean color, unsigned char c) {
   }
 }
 
-//========================================================Вывод строки
+
 void LCD1202::print(byte x, byte y, boolean color, char *str){
   unsigned char type = *str;
   if(type>=128) x=x-3;
@@ -143,12 +141,12 @@ void LCD1202::print(byte x, byte y, boolean color, char *str){
     (type>=128)? x=x+3 : x=x+6;
   }
 }
-//========================================================Вывод числовых значений
+
 void LCD1202::print(byte x, byte y, boolean color, long num){
   char c[20];
   print(x, y, color, ltoa(num,c,10));
 }
-//========================================================Вывод строки в заданное знакоместо и строку
+
 void LCD1202::print_1607(byte x, byte y, boolean color, char *str)
 {
 byte nPos[16]={0,6,12,18,24,30,36,42,48,54,60,66,72,78,84,90};
@@ -156,7 +154,7 @@ byte nStr[7]={1,10,20,30,40,50,60};
 print(nPos[x], nStr[y], color, str);
 }
 
-//====================================================Рисование линии
+
 void LCD1202::drawLine(byte x0, byte y0, byte x1, byte y1, boolean color) {
   int steep = abs(y1 - y0) > abs(x1 - x0);
   if (steep) {
@@ -186,17 +184,17 @@ void LCD1202::drawLine(byte x0, byte y0, byte x1, byte y1, boolean color) {
   }
 }
 
-//========================================Рисование вертикальной линии
+
 void LCD1202::drawFastVLine(byte x, byte y, byte h, boolean color) {
   drawLine(x, y, x, y+h-1, color);
 }
 
-//======================================Рисование горизонтальной линии
+
 void LCD1202::drawFastHLine(byte x, byte y, byte w, boolean color) {
   drawLine(x, y, x+w-1, y, color);
 }
 
-//============================================Рисование прямоугольника
+
 void LCD1202::drawRect(byte x, byte y, byte w, byte h, boolean color) {
   drawFastHLine(x, y, w, color);
   drawFastHLine(x, y+h-1, w, color);
@@ -204,7 +202,7 @@ void LCD1202::drawRect(byte x, byte y, byte w, byte h, boolean color) {
   drawFastVLine(x+w-1, y, h, color);
 }
 
-//============================================Рисование окружности
+
 void LCD1202::drawCircle(byte x0, byte y0, int16_t r, boolean color) {
   int f = 1 - r;
   int ddF_x = 1;
@@ -238,7 +236,6 @@ void LCD1202::drawCircle(byte x0, byte y0, int16_t r, boolean color) {
   }
 }
 
-//===============================Рисование скругленного прямоугольника
 void LCD1202::drawRoundRect(byte x, byte y, byte w, byte h, byte r, boolean color) {
   // smarter version
   drawFastHLine(x+r , y , w-2*r, color); // Top
@@ -252,14 +249,12 @@ void LCD1202::drawRoundRect(byte x, byte y, byte w, byte h, byte r, boolean colo
   drawCircleHelper(x+r , y+h-r-1, r, 8, color);
 }
 
-//==============================================Рисование треугольника
 void LCD1202::drawTriangle(byte x0, byte y0, byte x1, byte y1, byte x2, byte y2, boolean color) {
   drawLine(x0, y0, x1, y1, color);
   drawLine(x1, y1, x2, y2, color);
   drawLine(x2, y2, x0, y0, color);
 }
 
-//======================================================Рисование дуги
 void LCD1202::drawCircleHelper(byte x0, byte y0, byte r, byte cornername, boolean color) {
   int f = 1 - r;
   int ddF_x = 1;
@@ -295,13 +290,12 @@ void LCD1202::drawCircleHelper(byte x0, byte y0, byte r, byte cornername, boolea
   }
 }
 
-//========================================Рисование залитой окружности
 void LCD1202::fillCircle(byte x0, byte y0, byte r, boolean color) {
   drawFastVLine(x0, y0-r, 2*r+1, color);
   fillCircleHelper(x0, y0, r, 3, 0, color);
 }
 
-//======================================================Рисование дуги
+
 void LCD1202::fillCircleHelper(byte x0, byte y0, byte r, byte cornername, byte delta, boolean color) {
 
   int f = 1 - r;
@@ -331,7 +325,7 @@ void LCD1202::fillCircleHelper(byte x0, byte y0, byte r, byte cornername, byte d
   }
 }
 
-//=====================================Рисование залитый прямоугольник
+
 void LCD1202::fillRect(byte x, byte y, byte w, byte h, boolean color) {
   
   for (int16_t i=x; i<x+w; i++) {
@@ -339,7 +333,7 @@ void LCD1202::fillRect(byte x, byte y, byte w, byte h, boolean color) {
   }
 }
 
-//======================Рисование залитого скругленного прямоугольника
+
 void LCD1202::fillRoundRect(byte x, byte y, byte w, byte h, byte r, boolean color) {
   // smarter version
   fillRect(x+r, y, w-2*r, h, color);
@@ -349,7 +343,7 @@ void LCD1202::fillRoundRect(byte x, byte y, byte w, byte h, byte r, boolean colo
   fillCircleHelper(x+r , y+r, r, 2, h-2*r-1, color);
 }
 
-//=====================================Рисование залитого треугольника
+
 void LCD1202::fillTriangle(byte x0, byte y0, byte x1, byte y1, byte x2, byte y2, boolean color) {
 
   int a, b, y, last;
@@ -417,7 +411,7 @@ b = x0 + (x2 - x0) * (y - y0) / (y2 - y0);
   }
 }
 
-//======================================================Вывод картинки
+
 void LCD1202::drawBitmap(byte x, byte y, const char *bitmap, byte w, byte h, boolean color) {
   for (int16_t j=0; j<h; j++) {
     for (int16_t i=0; i<w; i++ ) {
@@ -428,7 +422,7 @@ void LCD1202::drawBitmap(byte x, byte y, const char *bitmap, byte w, byte h, boo
   }
 }
 
-//=========================Вывод символа 16х32 пикселя в координаты XY
+
 void LCD1202::simb16x32(byte x, byte y, boolean color, byte c){
   for (byte k=0;k<4;k++){
     for (byte i=0;i<16;i++){
@@ -440,7 +434,8 @@ void LCD1202::simb16x32(byte x, byte y, boolean color, byte c){
     }
   }
 }
-//=========================Вывод символа 10х16 пикселя в координаты XY
+
+
 void LCD1202::simb10x16(byte x, byte y, boolean color, byte c){
   for (byte k=0;k<2;k++){
     for (byte i=0;i<10;i++){
