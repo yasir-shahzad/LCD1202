@@ -34,7 +34,7 @@ LCD1202::LCD1202(uint8_t _RES, uint8_t _CS, uint8_t _Data, uint8_t _Clock) {
   }
  
 
-void LCD1202::Clear_LCD() {
+void LCD1202::clearLcd() {
   for (int index = 0; index < 864 ; index++){
      LCD_RAM[index] = (0x00);
   }
@@ -49,7 +49,7 @@ void LCD1202::dWrite(byte pin, byte val){
 }
 
  
-void LCD1202::SendByte(byte mode, byte c){
+void LCD1202::sendChar(byte mode, byte c){
   dWrite(CS, 0);
   (mode)? dWrite(Data,1) : dWrite(Data,0);
   dWrite(Clock, 1);
@@ -64,20 +64,20 @@ void LCD1202::SendByte(byte mode, byte c){
   dWrite(Clock, 0);
 }
 
-void LCD1202::Update(){
+void LCD1202::update(){
   for(byte p = 0; p < 9; p++){
-    SendByte(LCD_C, SetYAddr| p); 
-    SendByte(LCD_C, SetXAddr4);
-    SendByte(LCD_C, SetXAddr3);
+    sendChar(LCD_C, SetYAddr| p); 
+    sendChar(LCD_C, SetXAddr4);
+    sendChar(LCD_C, SetXAddr3);
 
     for(byte col=0; col < LCD_X; col++){
-      SendByte(LCD_D, LCD_RAM[(LCD_X * p) + col]);
+      sendChar(LCD_D, LCD_RAM[(LCD_X * p) + col]);
     }
   }
 }
 
 
-void LCD1202::Inicialize(){
+void LCD1202::initialize(){
   pinMode(RES,   OUTPUT);
   pinMode(CS,    OUTPUT);
   pinMode(Data,  OUTPUT);
@@ -90,11 +90,11 @@ void LCD1202::Inicialize(){
   delay(20);
   dWrite(CS, 1);
 
-  SendByte(LCD_C,0x2F);            // Power control set(charge pump on/off)
-  SendByte(LCD_C,0xA4);   
-  SendByte(LCD_C,0xAF);            // экран вкл/выкл
-  Clear_LCD();
-  Update();
+  sendChar(LCD_C,0x2F);            // Power control set(charge pump on/off)
+  sendChar(LCD_C,0xA4);   
+  sendChar(LCD_C,0xAF);            // экран вкл/выкл
+  clearLcd();
+  update();
 }
 
 void LCD1202::drawPixel (byte x, byte y, boolean color) {
@@ -450,7 +450,7 @@ void LCD1202::simb10x16(byte x, byte y, boolean color, byte c){
 
 
 void LCD1202::customObj(byte x, byte y, boolean color, byte c){
-//  fillRect(x, y, 14, 12 , 0); Update (); delay(200);
+//  fillRect(x, y, 14, 12 , 0); update (); delay(200);
   for (byte k=0;k<2;k++){  //byte row
     for (byte i=0;i<12;i++){
       byte line = pgm(&(mass10x10[c][i+k*12]));
@@ -460,7 +460,7 @@ void LCD1202::customObj(byte x, byte y, boolean color, byte c){
       }
     }
   }
- // Update ();
+ // update ();
 }
 
 
@@ -498,7 +498,7 @@ void LCD1202::battery(uint8_t x, uint8_t y, uint8_t val, bool  charging){
        else  drawFastVLine(x, y+4, 3, 1);
      
   }
-     //  Update ();
+     //  update ();
 }
 
 
@@ -514,27 +514,27 @@ void LCD1202::signal(uint8_t x, uint8_t y, uint8_t value){
        for (int i = 10, j = x+7, k=-1 ; 
                i <= value; i+=20, j +=3, k-=2)
        drawRect(j, y+10, 2, k, 1);
-   //    Update();
+   //    update();
 }
 
 void LCD1202::tick (uint8_t x ,uint8_t y){
   //  fillRect(x, y, 10, 10, 0); //clear the lcd  
-    drawFastVLine(x+1, y+6, 1, 1); delay((20));Update();
-    drawFastVLine(x+2, y+6, 2, 1); delay((20));Update();
-    drawFastVLine(x+3, y+7, 2, 1); delay((20));Update();
-    drawFastVLine(x+4, y+6, 3, 1); delay((20));Update();     
-    drawFastVLine(x+5, y+4, 3, 1); delay((20));Update();
-    drawFastVLine(x+6, y+3, 2, 1); delay((20));Update();
-    drawFastVLine(x+7, y+1, 3, 1); delay((20));Update();
-    drawFastVLine(x+8, y, 2, 1);   delay((20));Update();
-    drawFastVLine(x+9, y, 1, 1); //Update();
+    drawFastVLine(x+1, y+6, 1, 1); delay((20));update();
+    drawFastVLine(x+2, y+6, 2, 1); delay((20));update();
+    drawFastVLine(x+3, y+7, 2, 1); delay((20));update();
+    drawFastVLine(x+4, y+6, 3, 1); delay((20));update();     
+    drawFastVLine(x+5, y+4, 3, 1); delay((20));update();
+    drawFastVLine(x+6, y+3, 2, 1); delay((20));update();
+    drawFastVLine(x+7, y+1, 3, 1); delay((20));update();
+    drawFastVLine(x+8, y, 2, 1);   delay((20));update();
+    drawFastVLine(x+9, y, 1, 1); //update();
 }
-void LCD1202::Print_LCD(char* message){
-     Clear_LCD();
+void LCD1202::printLcd(char* message){
+     clearLcd();
      battery(78,0,90,0);
      signal(0,0,0);
      print (12, 30, 1, message); 
-     Update (); 
+     update (); 
 }
 
 

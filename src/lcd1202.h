@@ -1,7 +1,6 @@
 #ifndef __LCD1202
 #define __LCD1202
 #include <Arduino.h>
-// прототипы функций
 
 
 class LCD1202 {
@@ -9,9 +8,9 @@ class LCD1202 {
        unsigned long previousTime;
       
        LCD1202(uint8_t _RES, uint8_t _CS, uint8_t _Data, uint8_t _Clock);
-       void Inicialize();
-       void Clear_LCD();
-       void Update();
+       void initialize();
+       void clearLcd();
+       void update();
        void drawPixel(byte x, byte y, boolean color);
        void fillScreen(boolean color);
        void drawChar(byte x, byte y, boolean color, unsigned char c);
@@ -38,9 +37,9 @@ class LCD1202 {
        void battery(uint8_t,uint8_t,uint8_t, bool);
        void signal (uint8_t,uint8_t,uint8_t);
        void tick (uint8_t,uint8_t);
-       void Print_LCD(char* message);
+       void printLcd(char* message);
   private:
        void dWrite(byte pin, byte val);
-       void SendByte(byte mode, byte c);
+       void sendChar(byte mode, byte c);
 };
 #endif
