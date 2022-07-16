@@ -6,7 +6,7 @@
 // Library for accessing the STE2007 128x96 LCD display
 // Written by Yasir Shahzad (Yasirsahzad918@gmail.com)
 // Copyright (c) Yasir Shahazad.
-// Project started 1/15/2017
+// Project started 6/15/2022
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,13 @@
 //===========================================================================
 #include "Arduino.h"
 #include "font.h"
+
+//Arduino toolchain header, version dependent
+#if defined(ARDUINO) && ARDUINO >= 100
+	#include "Arduino.h"
+#else
+	#include "WProgram.h"
+#endif
 
 //Alias of Basic Types
 #define i32 long int
