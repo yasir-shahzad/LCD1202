@@ -18,15 +18,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //===========================================================================
-#include "Arduino.h"
-#include "font.h"
-
 //Arduino toolchain header, version dependent
 #if defined(ARDUINO) && ARDUINO >= 100
 	#include "Arduino.h"
 #else
 	#include "WProgram.h"
 #endif
+#include "font.h"
 
 //Alias of Basic Types
 #define i32 long int
