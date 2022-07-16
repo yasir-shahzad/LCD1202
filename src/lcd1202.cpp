@@ -1,11 +1,20 @@
 #include "lcd1202.h"
 
-//Instantiate the LCD1202
-LCD1202::LCD1202(u8 _rst, u8 _ss, u8 _data, u8 _clock) {
-    rst  = _rst;
-    ss   = _ss;
-    data = _data;
-    clock  = _clock;
+/*!
+  @brief Constructor for hardware SPI based on hardware controlled SCK (SCLK)
+  and MOSI (DIN) pins. CS is still controlled by any IO pin. NOTE: MISO and SS
+  will be set as an input and output respectively, so be careful sharing those
+  pins!
+  @param dc_pin   DC pin
+  @param cs_pin   CS pin
+  @param rst_pin  RST pin
+  @param theSPI   Pointer to SPIClass device for hardware SPI
+ */
+LCD1202::LCD1202(u8 rst_pin, u8 cs_pin, u8 din_pin, u8 sclk_pin) {
+    _rstpin  = rst_pin;
+    _cspin   = cs_pin;
+    _dinpin = din_pin;
+    _sckpin  = sclk_pin;
   }
  
 //Clear the screen in LCD1202 RAM
@@ -18,18 +27,18 @@ void LCD1202::clearScreen() {
 
  
 void LCD1202::sendChar(i8 mode, i8 c){
-  digitalWrite(ss, 0);
-  (mode)? digitalWrite(data,1) : digitalWrite(data,0);
-  digitalWrite(clock, 1);
+  digitalWrite(_cspin, 0);
+  (mode)? digitalWrite(_dinpin,1) : digitalWrite(_dinpin,0);
+  digitalWrite(_sckpin, 1);
   
   for(i8 i=0;i<8;i++) {
-    digitalWrite(clock,0);
-    (c & 0x80)? digitalWrite(data,1) : digitalWrite(data,0);
-    digitalWrite(clock,1);
+    digitalWrite(_sckpin,0);
+    (c & 0x80)? digitalWrite(_dinpin,1) : digitalWrite(_dinpin,0);
+    digitalWrite(_sckpin,1);
     c <<= 1;
   }
 
-  digitalWrite(clock, 0);
+  digitalWrite(_sckpin, 0);
 }
 
 void LCD1202::update(){
@@ -46,18 +55,18 @@ void LCD1202::update(){
 
 
 void LCD1202::initialize(){
-  pinMode(rst,   OUTPUT);
-  pinMode(ss,    OUTPUT);
-  pinMode(data,  OUTPUT);
-  pinMode(clock, OUTPUT);
+  pinMode(_rstpin, OUTPUT);
+  pinMode(_cspin,  OUTPUT);
+  pinMode(_dinpin,  OUTPUT);
+  pinMode(_sckpin, OUTPUT);
 
-  digitalWrite(ss,    LOW);
-  digitalWrite(rst,  HIGH);
-  digitalWrite(clock, LOW);
-  digitalWrite(data,  LOW);
+  digitalWrite(_cspin,  LOW);
+  digitalWrite(_rstpin, HIGH);
+  digitalWrite(_sckpin, LOW);
+  digitalWrite(_dinpin,  LOW);
   
   delay(20);
-  digitalWrite(ss, 1);
+  digitalWrite(_cspin, 1);
 
   sendChar(LCD_C,0x2F);            // Power control set(charge pump on/off)
   sendChar(LCD_C,0xA4);   
@@ -79,7 +88,7 @@ void LCD1202::fillScreen(bool color) {
 }
 
 
-void LCD1202::drawChar(i8 x, i8 y, bool color, unsigned char c) {
+void LCD1202::drawChar(i8 x, i8 y, bool color, u8 c) {
 
   if((x >= LCD_X) ||(y >= LCD_Y) || ((x + 4) < 0) || ((y + 7) < 0))
     return;
@@ -172,6 +181,14 @@ void LCD1202::drawRect(i8 x, i8 y, i8 w, i8 h, bool color) {
 }
 
 
+
+
+
+//void LCD1202::drawCircle(int xCenter, int yCenter, int radius,
+//		     byte bGraphicsMode)
+/*
+* Draw or clear a circle of radius r at x,y centre
+*/
 void LCD1202::drawCircle(i8 x0, i8 y0, u16 r, bool color) {
   int f = 1 - r;
   int ddF_x = 1;

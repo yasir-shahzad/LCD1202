@@ -37,9 +37,10 @@
 #define LCD_X        96
 #define LCD_Y        68
 #define LCD_String    9
-  
-#define W   94
-#define H   66
+
+
+#define LCDWIDTH   94   ///< LCD is 94 pixels wide
+#define LCDHEIGHT  66   ///< 66 pixels high
   
 #define SetYAddr   0xB0
 #define SetXAddr4  0x00
@@ -91,7 +92,7 @@ public:
   void signal (u8,u8,u8);
   void printLcd(char*);
 private:
-  volatile u8 rst, ss, data, clock;
+  volatile u8 _rstpin, _cspin, _dinpin, _sckpin;
   
   void sendChar(i8, i8);
 };
