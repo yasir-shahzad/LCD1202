@@ -58,7 +58,8 @@ i8 LCD_RAM[LCD_X * LCD_String];
 class LCD1202 {
   public:
        unsigned long previousTime;
-      
+       
+        //Instantiate the LCD1202
        LCD1202(u8, u8, u8, u8);
        void initialize();
        void clearScreen();

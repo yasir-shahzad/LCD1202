@@ -429,44 +429,40 @@ void LCD1202::customObj(i8 x, i8 y, bool color, i8 c){
 
 
 void LCD1202::battery(u8 x, u8 y, u8 val, bool  charging){
-        
-        static bool charCyc = true;
-        static u8 bVal;
+    static bool chrg_cyc = true;   //charging cycle
+    static u8 b_val;                  //battery value(0 100%)
          
-        if(charging) {
-            if(charCyc){
-                if(millis()-previousTime > 700){
-                bVal = (val < 5)? 0 : map(val, 5, 100, 1, 6);
-                previousTime = millis();
-                charCyc = false;
-                }
-             }
-            else if(millis()-previousTime > 700) {
-                previousTime = millis();
-                bVal += 1;
-                if(bVal == 6) charCyc = true;
+     if(charging) {
+        if(chrg_cyc) {
+            if(millis()-previousTime > 700) {
+              b_val = (val < 5)? 0 : map(val, 5, 100, 1, 6);
+              previousTime = millis();
+              chrg_cyc = false;
             }
-           if((millis()+100) < previousTime) previousTime = 0;
          }
-        else {
-          bVal = (val < 5)? 0 : map(val, 5, 100, 1, 6);
-          }
+        else if(millis()-previousTime > 700) {
+           previousTime = millis();
+           b_val += 1;
+           if(b_val == 6) chrg_cyc = true;
+        }
+       if((millis()+100) < previousTime) 
+         previousTime = 0;
+     }
+     else {
+      b_val = (val < 5)? 0 : map(val, 5, 100, 1, 6);
+      }
 
-   //    fillRect(x-2, y, 20, 12 , 0); //clear the lcd 
-       drawRect(x, y, 18, 11, 1);
-       drawRect(x-2, y+2, 3, 7, 1)  ;
-       drawFastVLine(x, y+3, 5, 0);
+   //fillRect(x-2, y, 20, 12 , 0); //clear the lcd 
+    drawRect(x, y, 18, 11, 1);
+    drawRect(x-2, y+2, 3, 7, 1)  ;
+    drawFastVLine(x, y+3, 5, 0);
              
-  for (int i = 1, j = x+14 ; i <= bVal; i++, j -=3){
+     for (int i = 1, j = x+14 ; i <= b_val; i++, j -=3) {
        if(i <= 5) drawRect(j, y+2, 2, 7, 1);  
-       else  drawFastVLine(x, y+4, 3, 1);
-     
-  }
+       else  drawFastVLine(x, y+4, 3, 1);     
+     }
      //  update ();
 }
-
-
-
 
 void LCD1202::signal(u8 x, u8 y, u8 value){
     //   fillRect(x, y, 15, 12 , 0); //clear the lcd 
@@ -481,18 +477,6 @@ void LCD1202::signal(u8 x, u8 y, u8 value){
    //    update();
 }
 
-void LCD1202::tick (u8 x ,u8 y){
-  //  fillRect(x, y, 10, 10, 0); //clear the lcd  
-    drawFastVLine(x+1, y+6, 1, 1); delay((20));update();
-    drawFastVLine(x+2, y+6, 2, 1); delay((20));update();
-    drawFastVLine(x+3, y+7, 2, 1); delay((20));update();
-    drawFastVLine(x+4, y+6, 3, 1); delay((20));update();     
-    drawFastVLine(x+5, y+4, 3, 1); delay((20));update();
-    drawFastVLine(x+6, y+3, 2, 1); delay((20));update();
-    drawFastVLine(x+7, y+1, 3, 1); delay((20));update();
-    drawFastVLine(x+8, y, 2, 1);   delay((20));update();
-    drawFastVLine(x+9, y, 1, 1); //update();
-}
 void LCD1202::printLcd(char* message){
      clearScreen();
      battery(78,0,90,0);
