@@ -19,7 +19,7 @@ LCD1202::LCD1202(u8 rst_pin, u8 cs_pin, u8 din_pin, u8 sclk_pin) {
  
 //Clear the screen in LCD1202 RAM
 void LCD1202::clearScreen() {
-   int index = 0;
+   int index;
     for (index = 0; index < 864 ; index++) {
       LCD_RAM[index] = (0x00);
     }
