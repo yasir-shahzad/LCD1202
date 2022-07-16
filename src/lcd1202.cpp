@@ -1,5 +1,4 @@
 #include "Arduino.h"
-//#include <avr/pgmspace.h>
 #include "lcd1202.h"
 #include "font.h"
 
@@ -21,56 +20,48 @@
 #define LCD_D         1
 #define LCD_C         0
 
-byte LCD_RAM[LCD_X*LCD_String];
+i8 LCD_RAM[LCD_X * LCD_String];
 
-volatile uint8_t RES, CS, Data, Clock;
+volatile u8 rst, cs, data, clock;
 
 
-LCD1202::LCD1202(uint8_t _RES, uint8_t _CS, uint8_t _Data, uint8_t _Clock) {
-    RES = _RES;
-    CS = _CS;
-    Data = _Data;
-    Clock = _Clock;
+LCD1202::LCD1202(u8 _rst, u8 _cs, u8 _data, u8 _clock) {
+    rst   =   _rst;
+    cs    =   _cs;
+    data  =  _data;
+    clock =  _clock;
   }
  
 
-void LCD1202::clearLcd() {
+void LCD1202::clearScreen() {
   for (int index = 0; index < 864 ; index++){
      LCD_RAM[index] = (0x00);
   }
 }
 
-void LCD1202::dWrite(byte pin, byte val){
-  digitalWrite(pin, val);
- // byte bit = digitalPinToBitMask(pin);
-//  volatile byte *out;
-//  out = portOutputRegister(digitalPinToPort(pin));
- // (val)? *out |= bit : *out &=~bit;
-}
-
  
-void LCD1202::sendChar(byte mode, byte c){
-  dWrite(CS, 0);
-  (mode)? dWrite(Data,1) : dWrite(Data,0);
-  dWrite(Clock, 1);
+void LCD1202::sendChar(i8 mode, i8 c){
+  digitalWrite(cs, 0);
+  (mode)? digitalWrite(data,1) : digitalWrite(data,0);
+  digitalWrite(clock, 1);
   
-  for(byte i=0;i<8;i++) {
-    dWrite(Clock,0);
-    (c & 0x80)? dWrite(Data,1) : dWrite(Data,0);
-    dWrite(Clock,1);
+  for(i8 i=0;i<8;i++) {
+    digitalWrite(clock,0);
+    (c & 0x80)? digitalWrite(data,1) : digitalWrite(data,0);
+    digitalWrite(clock,1);
     c <<= 1;
   }
 
-  dWrite(Clock, 0);
+  digitalWrite(clock, 0);
 }
 
 void LCD1202::update(){
-  for(byte p = 0; p < 9; p++){
+  for(i8 p = 0; p < 9; p++){
     sendChar(LCD_C, SetYAddr| p); 
     sendChar(LCD_C, SetXAddr4);
     sendChar(LCD_C, SetXAddr3);
 
-    for(byte col=0; col < LCD_X; col++){
+    for(i8 col=0; col < LCD_X; col++){
       sendChar(LCD_D, LCD_RAM[(LCD_X * p) + col]);
     }
   }
@@ -78,26 +69,27 @@ void LCD1202::update(){
 
 
 void LCD1202::initialize(){
-  pinMode(RES,   OUTPUT);
-  pinMode(CS,    OUTPUT);
-  pinMode(Data,  OUTPUT);
-  pinMode(Clock, OUTPUT);
+  pinMode(rst,   OUTPUT);
+  pinMode(cs,    OUTPUT);
+  pinMode(data,  OUTPUT);
+  pinMode(clock, OUTPUT);
 
-  dWrite(RES, 1);
-  dWrite(Clock, 0);
-  dWrite(Data, 0);
-  dWrite(CS, 0);
+  digitalWrite(cs, LOW);
+  digitalWrite(rst, HIGH);
+  digitalWrite(clock, LOW);
+  digitalWrite(data, LOW);
+  
   delay(20);
-  dWrite(CS, 1);
+  digitalWrite(cs, 1);
 
   sendChar(LCD_C,0x2F);            // Power control set(charge pump on/off)
   sendChar(LCD_C,0xA4);   
   sendChar(LCD_C,0xAF);            // экран вкл/выкл
-  clearLcd();
+  clearScreen();
   update();
 }
 
-void LCD1202::drawPixel (byte x, byte y, boolean color) {
+void LCD1202::writePixel (i8 x, i8 y, bool color) {
   if ((x < 0) || (x >= LCD_X) || (y < 0) || (y >= LCD_Y)) return;
 
   if (color) LCD_RAM[x+ (y/8)*LCD_X] |= _BV(y%8);
@@ -105,12 +97,12 @@ void LCD1202::drawPixel (byte x, byte y, boolean color) {
 }
 
 
-void LCD1202::fillScreen(boolean color) {
+void LCD1202::fillScreen(bool color) {
   fillRect(0, 0, LCD_X, LCD_Y, color);
 }
 
 
-void LCD1202::drawChar(byte x, byte y, boolean color, unsigned char c) {
+void LCD1202::drawChar(i8 x, i8 y, bool color, unsigned char c) {
 
   if((x >= LCD_X) ||(y >= LCD_Y) || ((x + 4) < 0) || ((y + 7) < 0))
     return;
@@ -121,18 +113,18 @@ void LCD1202::drawChar(byte x, byte y, boolean color, unsigned char c) {
   if(c>=176 && c<=191) c = c-48;
   if(c>191)  return;
 
-  for (byte i=0; i<6; i++ ) {
-    byte line;
+  for (i8 i=0; i<6; i++ ) {
+    i8 line;
     (i == 5)? line = 0x0 : line = pgm(font+(c*5)+i);
-    for (byte j = 0; j<8; j++) {
-      (line & 0x1)? drawPixel(x+i, y+j, color) : drawPixel(x+i, y+j, !color);
+    for (i8 j = 0; j<8; j++) {
+      (line & 0x1)? writePixel(x+i, y+j, color) : writePixel(x+i, y+j, !color);
       line >>= 1;
     }
   }
 }
 
 
-void LCD1202::print(byte x, byte y, boolean color, char *str){
+void LCD1202::print(i8 x, i8 y, bool color, char *str){
   unsigned char type = *str;
   if(type>=128) x=x-3;
   while(*str){ 
@@ -142,20 +134,20 @@ void LCD1202::print(byte x, byte y, boolean color, char *str){
   }
 }
 
-void LCD1202::print(byte x, byte y, boolean color, long num){
+void LCD1202::print(i8 x, i8 y, bool color, long num){
   char c[20];
   print(x, y, color, ltoa(num,c,10));
 }
 
-void LCD1202::print_1607(byte x, byte y, boolean color, char *str)
+void LCD1202::print_1607(i8 x, i8 y, bool color, char *str)
 {
-byte nPos[16]={0,6,12,18,24,30,36,42,48,54,60,66,72,78,84,90};
-byte nStr[7]={1,10,20,30,40,50,60};
+i8 nPos[16]={0,6,12,18,24,30,36,42,48,54,60,66,72,78,84,90};
+i8 nStr[7]={1,10,20,30,40,50,60};
 print(nPos[x], nStr[y], color, str);
 }
 
 
-void LCD1202::drawLine(byte x0, byte y0, byte x1, byte y1, boolean color) {
+void LCD1202::drawLine(i8 x0, i8 y0, i8 x1, i8 y1, bool color) {
   int steep = abs(y1 - y0) > abs(x1 - x0);
   if (steep) {
     swap(x0, y0);
@@ -175,7 +167,7 @@ void LCD1202::drawLine(byte x0, byte y0, byte x1, byte y1, boolean color) {
   (y0 < y1)?  ystep = 1 : ystep = -1;
 
   for (; x0<=x1; x0++) {
-    (steep)? drawPixel(y0, x0, color) : drawPixel(x0, y0, color);
+    (steep)? writePixel(y0, x0, color) : writePixel(x0, y0, color);
     err -= dy;
     if (err < 0) {
       y0 += ystep;
@@ -185,17 +177,17 @@ void LCD1202::drawLine(byte x0, byte y0, byte x1, byte y1, boolean color) {
 }
 
 
-void LCD1202::drawFastVLine(byte x, byte y, byte h, boolean color) {
+void LCD1202::drawFastVLine(i8 x, i8 y, i8 h, bool color) {
   drawLine(x, y, x, y+h-1, color);
 }
 
 
-void LCD1202::drawFastHLine(byte x, byte y, byte w, boolean color) {
+void LCD1202::drawFastHLine(i8 x, i8 y, i8 w, bool color) {
   drawLine(x, y, x+w-1, y, color);
 }
 
 
-void LCD1202::drawRect(byte x, byte y, byte w, byte h, boolean color) {
+void LCD1202::drawRect(i8 x, i8 y, i8 w, i8 h, bool color) {
   drawFastHLine(x, y, w, color);
   drawFastHLine(x, y+h-1, w, color);
   drawFastVLine(x, y, h, color);
@@ -203,17 +195,17 @@ void LCD1202::drawRect(byte x, byte y, byte w, byte h, boolean color) {
 }
 
 
-void LCD1202::drawCircle(byte x0, byte y0, int16_t r, boolean color) {
+void LCD1202::drawCircle(i8 x0, i8 y0, u16 r, bool color) {
   int f = 1 - r;
   int ddF_x = 1;
   int ddF_y = -2 * r;
   int x = 0;
   int y = r;
 
-  drawPixel(x0, y0+r, color);
-  drawPixel(x0, y0-r, color);
-  drawPixel(x0+r, y0, color);
-  drawPixel(x0-r, y0, color);
+  writePixel(x0, y0+r, color);
+  writePixel(x0, y0-r, color);
+  writePixel(x0+r, y0, color);
+  writePixel(x0-r, y0, color);
 
   while (x<y) {
     if (f >= 0) {
@@ -225,18 +217,18 @@ void LCD1202::drawCircle(byte x0, byte y0, int16_t r, boolean color) {
     ddF_x += 2;
     f += ddF_x;
   
-    drawPixel(x0 + x, y0 + y, color);
-    drawPixel(x0 - x, y0 + y, color);
-    drawPixel(x0 + x, y0 - y, color);
-    drawPixel(x0 - x, y0 - y, color);
-    drawPixel(x0 + y, y0 + x, color);
-    drawPixel(x0 - y, y0 + x, color);
-    drawPixel(x0 + y, y0 - x, color);
-    drawPixel(x0 - y, y0 - x, color);
+    writePixel(x0 + x, y0 + y, color);
+    writePixel(x0 - x, y0 + y, color);
+    writePixel(x0 + x, y0 - y, color);
+    writePixel(x0 - x, y0 - y, color);
+    writePixel(x0 + y, y0 + x, color);
+    writePixel(x0 - y, y0 + x, color);
+    writePixel(x0 + y, y0 - x, color);
+    writePixel(x0 - y, y0 - x, color);
   }
 }
 
-void LCD1202::drawRoundRect(byte x, byte y, byte w, byte h, byte r, boolean color) {
+void LCD1202::drawRoundRect(i8 x, i8 y, i8 w, i8 h, i8 r, bool color) {
   // smarter version
   drawFastHLine(x+r , y , w-2*r, color); // Top
   drawFastHLine(x+r , y+h-1, w-2*r, color); // Bottom
@@ -249,13 +241,13 @@ void LCD1202::drawRoundRect(byte x, byte y, byte w, byte h, byte r, boolean colo
   drawCircleHelper(x+r , y+h-r-1, r, 8, color);
 }
 
-void LCD1202::drawTriangle(byte x0, byte y0, byte x1, byte y1, byte x2, byte y2, boolean color) {
+void LCD1202::drawTriangle(i8 x0, i8 y0, i8 x1, i8 y1, i8 x2, i8 y2, bool color) {
   drawLine(x0, y0, x1, y1, color);
   drawLine(x1, y1, x2, y2, color);
   drawLine(x2, y2, x0, y0, color);
 }
 
-void LCD1202::drawCircleHelper(byte x0, byte y0, byte r, byte cornername, boolean color) {
+void LCD1202::drawCircleHelper(i8 x0, i8 y0, i8 r, i8 cornername, bool color) {
   int f = 1 - r;
   int ddF_x = 1;
   int ddF_y = -2 * r;
@@ -272,31 +264,31 @@ void LCD1202::drawCircleHelper(byte x0, byte y0, byte r, byte cornername, boolea
     ddF_x += 2;
     f += ddF_x;
     if (cornername & 0x4) {
-      drawPixel(x0 + x, y0 + y, color);
-      drawPixel(x0 + y, y0 + x, color);
+      writePixel(x0 + x, y0 + y, color);
+      writePixel(x0 + y, y0 + x, color);
     }
     if (cornername & 0x2) {
-      drawPixel(x0 + x, y0 - y, color);
-      drawPixel(x0 + y, y0 - x, color);
+      writePixel(x0 + x, y0 - y, color);
+      writePixel(x0 + y, y0 - x, color);
     }
     if (cornername & 0x8) {
-      drawPixel(x0 - y, y0 + x, color);
-      drawPixel(x0 - x, y0 + y, color);
+      writePixel(x0 - y, y0 + x, color);
+      writePixel(x0 - x, y0 + y, color);
     }
     if (cornername & 0x1) {
-      drawPixel(x0 - y, y0 - x, color);
-      drawPixel(x0 - x, y0 - y, color);
+      writePixel(x0 - y, y0 - x, color);
+      writePixel(x0 - x, y0 - y, color);
     }
   }
 }
 
-void LCD1202::fillCircle(byte x0, byte y0, byte r, boolean color) {
+void LCD1202::fillCircle(i8 x0, i8 y0, i8 r, bool color) {
   drawFastVLine(x0, y0-r, 2*r+1, color);
   fillCircleHelper(x0, y0, r, 3, 0, color);
 }
 
 
-void LCD1202::fillCircleHelper(byte x0, byte y0, byte r, byte cornername, byte delta, boolean color) {
+void LCD1202::fillCircleHelper(i8 x0, i8 y0, i8 r, i8 cornername, i8 delta, bool color) {
 
   int f = 1 - r;
   int ddF_x = 1;
@@ -326,15 +318,15 @@ void LCD1202::fillCircleHelper(byte x0, byte y0, byte r, byte cornername, byte d
 }
 
 
-void LCD1202::fillRect(byte x, byte y, byte w, byte h, boolean color) {
+void LCD1202::fillRect(i8 x, i8 y, i8 w, i8 h, bool color) {
   
-  for (int16_t i=x; i<x+w; i++) {
+  for (u16 i=x; i<x+w; i++) {
     drawFastVLine(i, y, h, color);
   }
 }
 
 
-void LCD1202::fillRoundRect(byte x, byte y, byte w, byte h, byte r, boolean color) {
+void LCD1202::fillRoundRect(i8 x, i8 y, i8 w, i8 h, i8 r, bool color) {
   // smarter version
   fillRect(x+r, y, w-2*r, h, color);
 
@@ -344,7 +336,7 @@ void LCD1202::fillRoundRect(byte x, byte y, byte w, byte h, byte r, boolean colo
 }
 
 
-void LCD1202::fillTriangle(byte x0, byte y0, byte x1, byte y1, byte x2, byte y2, boolean color) {
+void LCD1202::fillTriangle(i8 x0, i8 y0, i8 x1, i8 y1, i8 x2, i8 y2, bool color) {
 
   int a, b, y, last;
 
@@ -369,7 +361,7 @@ void LCD1202::fillTriangle(byte x0, byte y0, byte x1, byte y1, byte x2, byte y2,
     return;
   }
 
-  int16_t
+  u16
     dx01 = x1 - x0,
     dy01 = y1 - y0,
     dx02 = x2 - x0,
@@ -387,10 +379,7 @@ void LCD1202::fillTriangle(byte x0, byte y0, byte x1, byte y1, byte x2, byte y2,
     b = x0 + sb / dy02;
     sa += dx01;
     sb += dx02;
-    /* longhand:
-a = x0 + (x1 - x0) * (y - y0) / (y1 - y0);
-b = x0 + (x2 - x0) * (y - y0) / (y2 - y0);
-*/
+
     if(a > b) swap(a,b);
     drawFastHLine(a, y, b-a+1, color);
   }
@@ -402,33 +391,30 @@ b = x0 + (x2 - x0) * (y - y0) / (y2 - y0);
     b = x0 + sb / dy02;
     sa += dx12;
     sb += dx02;
-    /* longhand:
-a = x1 + (x2 - x1) * (y - y1) / (y2 - y1);
-b = x0 + (x2 - x0) * (y - y0) / (y2 - y0);
-*/
+
     if(a > b) swap(a,b);
     drawFastHLine(a, y, b-a+1, color);
   }
 }
 
 
-void LCD1202::drawBitmap(byte x, byte y, const char *bitmap, byte w, byte h, boolean color) {
-  for (int16_t j=0; j<h; j++) {
-    for (int16_t i=0; i<w; i++ ) {
+void LCD1202::drawBitmap(i8 x, i8 y, const char *bitmap, i8 w, i8 h, bool color) {
+  for (u16 j=0; j<h; j++) {
+    for (u16 i=0; i<w; i++ ) {
       if (pgm(bitmap + i + (j/8)*w) & _BV(j%8)) {
-        drawPixel(x+i, y+j, color);
+        writePixel(x+i, y+j, color);
       }
     }
   }
 }
 
 
-void LCD1202::simb16x32(byte x, byte y, boolean color, byte c){
-  for (byte k=0;k<4;k++){
-    for (byte i=0;i<16;i++){
-      byte line = pgm(&(mass16x32[c][i+k*16]));
-      for (byte j = 0; j<8; j++) {
-        (line & 0x01)? drawPixel(x+i, y+j+k*8, color) : drawPixel(x+i, y+j+k*8, !color);
+void LCD1202::simb16x32(i8 x, i8 y, bool color, i8 c){
+  for (i8 k=0;k<4;k++){
+    for (i8 i=0;i<16;i++){
+      i8 line = pgm(&(mass16x32[c][i+k*16]));
+      for (i8 j = 0; j<8; j++) {
+        (line & 0x01)? writePixel(x+i, y+j+k*8, color) : writePixel(x+i, y+j+k*8, !color);
         line >>= 1;
       }
     }
@@ -436,12 +422,12 @@ void LCD1202::simb16x32(byte x, byte y, boolean color, byte c){
 }
 
 
-void LCD1202::simb10x16(byte x, byte y, boolean color, byte c){
-  for (byte k=0;k<2;k++){
-    for (byte i=0;i<10;i++){
-      byte line = pgm(&(mass10x16[c][i+k*10]));
-      for (byte j = 0; j<8; j++) {
-        (line & 0x01)? drawPixel(x+i, y+j+k*8, color) : drawPixel(x+i, y+j+k*8, !color);
+void LCD1202::simb10x16(i8 x, i8 y, bool color, i8 c){
+  for (i8 k=0;k<2;k++){
+    for (i8 i=0;i<10;i++){
+      i8 line = pgm(&(mass10x16[c][i+k*10]));
+      for (i8 j = 0; j<8; j++) {
+        (line & 0x01)? writePixel(x+i, y+j+k*8, color) : writePixel(x+i, y+j+k*8, !color);
         line >>= 1;
       }
     }
@@ -449,13 +435,13 @@ void LCD1202::simb10x16(byte x, byte y, boolean color, byte c){
 }
 
 
-void LCD1202::customObj(byte x, byte y, boolean color, byte c){
+void LCD1202::customObj(i8 x, i8 y, bool color, i8 c){
 //  fillRect(x, y, 14, 12 , 0); update (); delay(200);
-  for (byte k=0;k<2;k++){  //byte row
-    for (byte i=0;i<12;i++){
-      byte line = pgm(&(mass10x10[c][i+k*12]));
-      for (byte j = 0; j<8; j++) {
-        (line & 0x01)? drawPixel(x+i, y+j+k*8, color) : drawPixel(x+i, y+j+k*8, !color);
+  for (i8 k=0;k<2;k++){  //i8 row
+    for (i8 i=0;i<12;i++){
+      i8 line = pgm(&(mass10x10[c][i+k*12]));
+      for (i8 j = 0; j<8; j++) {
+        (line & 0x01)? writePixel(x+i, y+j+k*8, color) : writePixel(x+i, y+j+k*8, !color);
         line >>= 1;
       }
     }
@@ -464,10 +450,10 @@ void LCD1202::customObj(byte x, byte y, boolean color, byte c){
 }
 
 
-void LCD1202::battery(uint8_t x, uint8_t y, uint8_t val, bool  charging){
+void LCD1202::battery(u8 x, u8 y, u8 val, bool  charging){
         
         static bool charCyc = true;
-        static uint8_t bVal;
+        static u8 bVal;
          
         if(charging) {
             if(charCyc){
@@ -504,7 +490,7 @@ void LCD1202::battery(uint8_t x, uint8_t y, uint8_t val, bool  charging){
 
 
 
-void LCD1202::signal(uint8_t x, uint8_t y, uint8_t value){
+void LCD1202::signal(u8 x, u8 y, u8 value){
     //   fillRect(x, y, 15, 12 , 0); //clear the lcd 
        drawFastHLine(x+1, y+1, 8, 1);
        drawRect(x+4, y+2, 2, 9, 1);
@@ -517,7 +503,7 @@ void LCD1202::signal(uint8_t x, uint8_t y, uint8_t value){
    //    update();
 }
 
-void LCD1202::tick (uint8_t x ,uint8_t y){
+void LCD1202::tick (u8 x ,u8 y){
   //  fillRect(x, y, 10, 10, 0); //clear the lcd  
     drawFastVLine(x+1, y+6, 1, 1); delay((20));update();
     drawFastVLine(x+2, y+6, 2, 1); delay((20));update();
@@ -530,7 +516,7 @@ void LCD1202::tick (uint8_t x ,uint8_t y){
     drawFastVLine(x+9, y, 1, 1); //update();
 }
 void LCD1202::printLcd(char* message){
-     clearLcd();
+     clearScreen();
      battery(78,0,90,0);
      signal(0,0,0);
      print (12, 30, 1, message); 

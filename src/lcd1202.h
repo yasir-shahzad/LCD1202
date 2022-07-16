@@ -1,45 +1,66 @@
-#ifndef __LCD1202
-#define __LCD1202
+
+/*
+ * Copyright (c) 2022 by Yasir Shahzad <Yasirshahzad918@gmail.com>
+ *
+ * This file is free software; you can redistribute it and/or modify
+ * it under the terms of either the GNU General Public License version 2
+ * or the GNU Lesser General Public License version 2.1, both as
+ * published by the Free Software Foundation.
+ */
+
+
+#ifndef LCD1202_H
+#define LCD1202_H
 #include <Arduino.h>
+
+
+//Alias of Basic Types
+#define i32 long int
+#define i16 int
+#define i8  char
+#define u32 unsigned long int
+#define u16 unsigned int
+#define u8  unsigned char
+
 
 
 class LCD1202 {
   public:
        unsigned long previousTime;
       
-       LCD1202(uint8_t _RES, uint8_t _CS, uint8_t _Data, uint8_t _Clock);
+       LCD1202(u8 _rst, u8 _CS, u8 _Data, u8 _Clock);
        void initialize();
-       void clearLcd();
+       void clearScreen();
        void update();
-       void drawPixel(byte x, byte y, boolean color);
-       void fillScreen(boolean color);
-       void drawChar(byte x, byte y, boolean color, unsigned char c);
-       void print(byte x, byte y, boolean color, char *str);
-	   void print(byte x, byte y, boolean color, long num);
-	   void print_1607(byte x, byte y, boolean color, char *str);
-       void drawLine(byte x0, byte y0, byte x1, byte y1, boolean color);
-       void drawFastVLine(byte x, byte y, byte h, boolean color);
-       void drawFastHLine(byte x, byte y, byte w, boolean color);
-       void drawRect(byte x, byte y, byte w, byte h, boolean color);
-       void drawCircle(byte x0, byte y0, int16_t r, boolean color);
-       void drawRoundRect(byte x, byte y, byte w, byte h, byte r, boolean color);
-       void drawTriangle(byte x0, byte y0, byte x1, byte y1, byte x2, byte y2, boolean color);
-       void drawCircleHelper(byte x0, byte y0, byte r, byte cornername, boolean color);
-       void fillCircle(byte x0, byte y0, byte r, boolean color);
-       void fillCircleHelper(byte x0, byte y0, byte r, byte cornername, byte delta, boolean color);
-       void fillRect(byte x, byte y, byte w, byte h, boolean color);
-       void fillRoundRect(byte x, byte y, byte w, byte h, byte r, boolean color);
-       void fillTriangle(byte x0, byte y0, byte x1, byte y1, byte x2, byte y2, boolean color);
-       void drawBitmap(byte x, byte y, const char *bitmap, byte w, byte h, boolean color);
-       void simb16x32(byte x, byte y, boolean color, byte c);
-       void simb10x16(byte x, byte y, boolean color, byte c);
-       void customObj(byte x, byte y, boolean color, byte c);
-       void battery(uint8_t,uint8_t,uint8_t, bool);
-       void signal (uint8_t,uint8_t,uint8_t);
-       void tick (uint8_t,uint8_t);
+       void writePixel(i8 x, i8 y, bool color);
+       void fillScreen(bool color);
+       void drawChar(i8 x, i8 y, bool color, unsigned char c);
+       void print(i8 x, i8 y, bool color, char *str);
+	   void print(i8 x, i8 y, bool color, long num);
+	   void print_1607(i8 x, i8 y, bool color, char *str);
+       void drawLine(i8 x0, i8 y0, i8 x1, i8 y1, bool color);
+       void drawFastVLine(i8 x, i8 y, i8 h, bool color);
+       void drawFastHLine(i8 x, i8 y, i8 w, bool color);
+       void drawRect(i8 x, i8 y, i8 w, i8 h, bool color);
+       void drawCircle(i8 x0, i8 y0, u16 r, bool color);
+       void drawRoundRect(i8 x, i8 y, i8 w, i8 h, i8 r, bool color);
+       void drawTriangle(i8 x0, i8 y0, i8 x1, i8 y1, i8 x2, i8 y2, bool color);
+       void drawCircleHelper(i8 x0, i8 y0, i8 r, i8 cornername, bool color);
+       void fillCircle(i8 x0, i8 y0, i8 r, bool color);
+       void fillCircleHelper(i8 x0, i8 y0, i8 r, i8 cornername, i8 delta, bool color);
+       void fillRect(i8 x, i8 y, i8 w, i8 h, bool color);
+       void fillRoundRect(i8 x, i8 y, i8 w, i8 h, i8 r, bool color);
+       void fillTriangle(i8 x0, i8 y0, i8 x1, i8 y1, i8 x2, i8 y2, bool color);
+       void drawBitmap(i8 x, i8 y, const char *bitmap, i8 w, i8 h, bool color);
+       void simb16x32(i8 x, i8 y, bool color, i8 c);
+       void simb10x16(i8 x, i8 y, bool color, i8 c);
+       void customObj(i8 x, i8 y, bool color, i8 c);
+       void battery(u8,u8,u8, bool);
+       void signal (u8,u8,u8);
+       void tick (u8,u8);
        void printLcd(char* message);
   private:
-       void dWrite(byte pin, byte val);
-       void sendChar(byte mode, byte c);
+
+       void sendChar(i8 mode, i8 c);
 };
 #endif
