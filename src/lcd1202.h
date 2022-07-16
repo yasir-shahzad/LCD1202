@@ -86,7 +86,7 @@ class LCD1202 {
        void tick (u8,u8);
        void printLcd(char* message);
   private:
-       volatile u8 rst, cs, data, clock;
+       volatile u8 rst_pin, cs_pin, data_pin, clk_pin;
        
        void sendChar(i8 mode, i8 c);
 };
