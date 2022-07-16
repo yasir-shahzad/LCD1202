@@ -91,7 +91,7 @@ public:
   void signal (u8,u8,u8);
   void printLcd(char*);
 private:
-  volatile u8 rst_pin, cs_pin, data_pin, clk_pin;
+  volatile u8 rst, ss, data, clock;
   
   void sendChar(i8, i8);
 };

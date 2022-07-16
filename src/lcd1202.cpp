@@ -1,36 +1,35 @@
-
 #include "lcd1202.h"
 
-
-
-LCD1202::LCD1202(u8 _rst, u8 _cs, u8 _data, u8 _clock) {
-    rst_pin   =   _rst;
-    cs_pin    =   _cs;
-    data_pin  =  _data;
-    clk_pin =  _clock;
+//Instantiate the LCD1202
+LCD1202::LCD1202(u8 _rst, u8 _ss, u8 _data, u8 _clock) {
+    rst  = _rst;
+    ss   = _ss;
+    data = _data;
+    clock  = _clock;
   }
  
-
+//Clear the screen in LCD1202 RAM
 void LCD1202::clearScreen() {
-  for (int index = 0; index < 864 ; index++){
-     LCD_RAM[index] = (0x00);
-  }
+   int index = 0;
+    for (index = 0; index < 864 ; index++) {
+      LCD_RAM[index] = (0x00);
+    }
 }
 
  
 void LCD1202::sendChar(i8 mode, i8 c){
-  digitalWrite(cs_pin, 0);
-  (mode)? digitalWrite(data_pin,1) : digitalWrite(data_pin,0);
-  digitalWrite(clk_pin, 1);
+  digitalWrite(ss, 0);
+  (mode)? digitalWrite(data,1) : digitalWrite(data,0);
+  digitalWrite(clock, 1);
   
   for(i8 i=0;i<8;i++) {
-    digitalWrite(clk_pin,0);
-    (c & 0x80)? digitalWrite(data_pin,1) : digitalWrite(data_pin,0);
-    digitalWrite(clk_pin,1);
+    digitalWrite(clock,0);
+    (c & 0x80)? digitalWrite(data,1) : digitalWrite(data,0);
+    digitalWrite(clock,1);
     c <<= 1;
   }
 
-  digitalWrite(clk_pin, 0);
+  digitalWrite(clock, 0);
 }
 
 void LCD1202::update(){
@@ -47,18 +46,18 @@ void LCD1202::update(){
 
 
 void LCD1202::initialize(){
-  pinMode(rst_pin,   OUTPUT);
-  pinMode(cs_pin,    OUTPUT);
-  pinMode(data_pin,  OUTPUT);
-  pinMode(clk_pin, OUTPUT);
+  pinMode(rst,   OUTPUT);
+  pinMode(ss,    OUTPUT);
+  pinMode(data,  OUTPUT);
+  pinMode(clock, OUTPUT);
 
-  digitalWrite(cs_pin,    LOW);
-  digitalWrite(rst_pin,  HIGH);
-  digitalWrite(clk_pin, LOW);
-  digitalWrite(data_pin,  LOW);
+  digitalWrite(ss,    LOW);
+  digitalWrite(rst,  HIGH);
+  digitalWrite(clock, LOW);
+  digitalWrite(data,  LOW);
   
   delay(20);
-  digitalWrite(cs_pin, 1);
+  digitalWrite(ss, 1);
 
   sendChar(LCD_C,0x2F);            // Power control set(charge pump on/off)
   sendChar(LCD_C,0xA4);   
