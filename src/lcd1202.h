@@ -56,44 +56,43 @@ i8 LCD_RAM[LCD_X * LCD_String];
 #define pgm     pgm_read_byte
 
 class LCD1202 {
-  public:
-       unsigned long previousTime;
-       
-        //Instantiate the LCD1202
-       LCD1202(u8, u8, u8, u8);
-       void initialize();
-       void clearScreen();
-       void update();
-       void writePixel(i8, i8, bool);
-       void fillScreen(bool);
-       void drawChar(i8, i8, bool, unsigned char);
-       void print(i8, i8, bool, char*);
-	   void print(i8, i8, bool, long);
-	   void print_1607(i8, i8, bool, char*);
-       void drawLine(i8, i8, i8, i8, bool);
-       void drawFastVLine(i8, i8, i8, bool);
-       void drawFastHLine(i8, i8, i8, bool);
-       void drawRect(i8, i8, i8, i8, bool);
-       void drawCircle(i8, i8, u16, bool);
-       void drawRoundRect(i8, i8, i8, i8, i8, bool);
-       void drawTriangle(i8, i8, i8, i8, i8, i8, bool);
-       void drawCircleHelper(i8, i8, i8, i8, bool);
-       void fillCircle(i8, i8, i8, bool);
-       void fillCircleHelper(i8, i8, i8, i8, i8, bool);
-       void fillRect(i8, i8, i8, i8, bool);
-       void fillRoundRect(i8, i8, i8, i8, i8, bool);
-       void fillTriangle(i8, i8, i8, i8, i8, i8, bool);
-       void drawBitmap(i8, i8, const char*, i8, i8, bool);
-       void simb16x32(i8, i8, bool, i8);
-       void simb10x16(i8, i8, bool, i8);
-       void customObj(i8, i8, bool, i8);
-       void battery(u8,u8,u8, bool);
-       void signal (u8,u8,u8);
-       void tick (u8,u8);
-       void printLcd(char*);
-  private:
-       volatile u8 rst_pin, cs_pin, data_pin, clk_pin;
-       
-       void sendChar(i8, i8);
+public:
+  unsigned long previousTime;
+  
+  //Instantiate the LCD1202
+  LCD1202(u8, u8, u8, u8);
+  void initialize();
+  void clearScreen();
+  void update();
+  void writePixel(i8, i8, bool);
+  void fillScreen(bool);
+  void drawChar(i8, i8, bool, unsigned char);
+  void print(i8, i8, bool, char*);
+  void print(i8, i8, bool, long);
+  void print_1607(i8, i8, bool, char*);
+  void drawLine(i8, i8, i8, i8, bool);
+  void drawFastVLine(i8, i8, i8, bool);
+  void drawFastHLine(i8, i8, i8, bool);
+  void drawRect(i8, i8, i8, i8, bool);
+  void drawCircle(i8, i8, u16, bool);
+  void drawRoundRect(i8, i8, i8, i8, i8, bool);
+  void drawTriangle(i8, i8, i8, i8, i8, i8, bool);
+  void drawCircleHelper(i8, i8, i8, i8, bool);
+  void fillCircle(i8, i8, i8, bool);
+  void fillCircleHelper(i8, i8, i8, i8, i8, bool);
+  void fillRect(i8, i8, i8, i8, bool);
+  void fillRoundRect(i8, i8, i8, i8, i8, bool);
+  void fillTriangle(i8, i8, i8, i8, i8, i8, bool);
+  void drawBitmap(i8, i8, const char*, i8, i8, bool);
+  void simb16x32(i8, i8, bool, i8);
+  void simb10x16(i8, i8, bool, i8);
+  void customObj(i8, i8, bool, i8);
+  void battery(u8,u8,u8, bool);
+  void signal (u8,u8,u8);
+  void printLcd(char*);
+private:
+  volatile u8 rst_pin, cs_pin, data_pin, clk_pin;
+  
+  void sendChar(i8, i8);
 };
 #endif
