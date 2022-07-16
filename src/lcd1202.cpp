@@ -446,7 +446,7 @@ void LCD1202::customObj(i8 x, i8 y, bool color, i8 c){
 
 void LCD1202::battery(u8 x, u8 y, u8 val, bool  charging){
     static bool chrg_cyc = true;   //charging cycle
-    static u8 b_val;                  //battery value(0 100%)
+    static u8 b_val;               //battery value(0 100%)
          
      if(charging) {
         if(chrg_cyc) {
