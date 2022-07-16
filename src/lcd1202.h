@@ -1,18 +1,25 @@
 
-/*
- * Copyright (c) 2022 by Yasir Shahzad <Yasirshahzad918@gmail.com>
- *
- * This file is free software; you can redistribute it and/or modify
- * it under the terms of either the GNU General Public License version 2
- * or the GNU Lesser General Public License version 2.1, both as
- * published by the Free Software Foundation.
- */
-
-
 #ifndef LCD1202_H
 #define LCD1202_H
-#include <Arduino.h>
-
+//
+// LCD1202
+// Library for accessing the STE2007 128x96 LCD display
+// Written by Yasir Shahzad (Yasirsahzad918@gmail.com)
+// Copyright (c) Yasir Shahazad.
+// Project started 1/15/2017
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//    http://www.apache.org/licenses/LICENSE-2.0
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===========================================================================
+#include "Arduino.h"
+#include "font.h"
 
 //Alias of Basic Types
 #define i32 long int
@@ -22,7 +29,26 @@
 #define u16 unsigned int
 #define u8  unsigned char
 
+#define LCD_X        96
+#define LCD_Y        68
+#define LCD_String    9
+  
+#define W   94
+#define H   66
+  
+#define SetYAddr   0xB0
+#define SetXAddr4  0x00
+#define SetXAddr3  0x10
 
+#define LCD_D         1
+#define LCD_C         0
+
+i8 LCD_RAM[LCD_X * LCD_String];
+
+#define lcd1202_swap(a, b)                                                     \
+  (((a) ^= (b)), ((b) ^= (a)), ((a) ^= (b))) ///< No-temp-var swap operation
+  
+#define pgm     pgm_read_byte
 
 class LCD1202 {
   public:
@@ -60,7 +86,8 @@ class LCD1202 {
        void tick (u8,u8);
        void printLcd(char* message);
   private:
-
+       volatile u8 rst, cs, data, clock;
+       
        void sendChar(i8 mode, i8 c);
 };
 #endif

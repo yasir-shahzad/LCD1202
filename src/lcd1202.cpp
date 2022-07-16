@@ -1,28 +1,6 @@
-#include "Arduino.h"
+
 #include "lcd1202.h"
-#include "font.h"
 
-
-#define LCD_X        96
-#define LCD_Y        68
-#define LCD_String    9
-
-#define W   94
-#define H   66
-
-#define SetYAddr   0xB0
-#define SetXAddr4  0x00
-#define SetXAddr3  0x10
-
-#define pgm     pgm_read_byte
-#define swap(a, b) { int t = a; a = b; b = t; }
-
-#define LCD_D         1
-#define LCD_C         0
-
-i8 LCD_RAM[LCD_X * LCD_String];
-
-volatile u8 rst, cs, data, clock;
 
 
 LCD1202::LCD1202(u8 _rst, u8 _cs, u8 _data, u8 _clock) {
@@ -74,10 +52,10 @@ void LCD1202::initialize(){
   pinMode(data,  OUTPUT);
   pinMode(clock, OUTPUT);
 
-  digitalWrite(cs, LOW);
-  digitalWrite(rst, HIGH);
+  digitalWrite(cs,    LOW);
+  digitalWrite(rst,  HIGH);
   digitalWrite(clock, LOW);
-  digitalWrite(data, LOW);
+  digitalWrite(data,  LOW);
   
   delay(20);
   digitalWrite(cs, 1);
@@ -115,7 +93,7 @@ void LCD1202::drawChar(i8 x, i8 y, bool color, unsigned char c) {
 
   for (i8 i=0; i<6; i++ ) {
     i8 line;
-    (i == 5)? line = 0x0 : line = pgm(font+(c*5)+i);
+    (i == 5)? line = 0x0 : line = pgm(BasicFont+(c*5)+i);
     for (i8 j = 0; j<8; j++) {
       (line & 0x1)? writePixel(x+i, y+j, color) : writePixel(x+i, y+j, !color);
       line >>= 1;
@@ -150,12 +128,12 @@ print(nPos[x], nStr[y], color, str);
 void LCD1202::drawLine(i8 x0, i8 y0, i8 x1, i8 y1, bool color) {
   int steep = abs(y1 - y0) > abs(x1 - x0);
   if (steep) {
-    swap(x0, y0);
-    swap(x1, y1);
+    lcd1202_swap(x0, y0);
+    lcd1202_swap(x1, y1);
   }
   if (x0 > x1) {
-    swap(x0, x1);
-    swap(y0, y1);
+    lcd1202_swap(x0, x1);
+    lcd1202_swap(y0, y1);
   }
   int dx, dy;
   dx = x1 - x0;
@@ -342,13 +320,13 @@ void LCD1202::fillTriangle(i8 x0, i8 y0, i8 x1, i8 y1, i8 x2, i8 y2, bool color)
 
   // Sort coordinates by Y order (y2 >= y1 >= y0)
   if (y0 > y1) {
-    swap(y0, y1); swap(x0, x1);
+    lcd1202_swap(y0, y1); lcd1202_swap(x0, x1);
   }
   if (y1 > y2) {
-    swap(y2, y1); swap(x2, x1);
+    lcd1202_swap(y2, y1); lcd1202_swap(x2, x1);
   }
   if (y0 > y1) {
-    swap(y0, y1); swap(x0, x1);
+    lcd1202_swap(y0, y1); lcd1202_swap(x0, x1);
   }
 
   if(y0 == y2) { // Handle awkward all-on-same-line case as its own thing
@@ -380,7 +358,7 @@ void LCD1202::fillTriangle(i8 x0, i8 y0, i8 x1, i8 y1, i8 x2, i8 y2, bool color)
     sa += dx01;
     sb += dx02;
 
-    if(a > b) swap(a,b);
+    if(a > b) lcd1202_swap(a,b);
     drawFastHLine(a, y, b-a+1, color);
   }
 
@@ -392,7 +370,7 @@ void LCD1202::fillTriangle(i8 x0, i8 y0, i8 x1, i8 y1, i8 x2, i8 y2, bool color)
     sa += dx12;
     sb += dx02;
 
-    if(a > b) swap(a,b);
+    if(a > b) lcd1202_swap(a,b);
     drawFastHLine(a, y, b-a+1, color);
   }
 }
