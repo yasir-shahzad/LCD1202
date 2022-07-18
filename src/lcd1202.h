@@ -64,7 +64,7 @@ public:
   LCD1202(u8, u8, u8, u8);
   void initialize();
   void clearScreen();
-  void update();
+  void display();
   void writePixel(i8, i8, bool);
   void fillScreen(bool);
   void drawChar(i8, i8, bool, unsigned char);

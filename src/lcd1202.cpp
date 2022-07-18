@@ -41,7 +41,7 @@ void LCD1202::sendChar(i8 mode, i8 c){
   digitalWrite(_sckpin, 0);
 }
 
-void LCD1202::update(){
+void LCD1202::display(){
   for(i8 p = 0; p < 9; p++){
     sendChar(LCD_C, SetYAddr| p); 
     sendChar(LCD_C, SetXAddr4);
@@ -72,7 +72,7 @@ void LCD1202::initialize(){
   sendChar(LCD_C,0xA4);   
   sendChar(LCD_C,0xAF);            // экран вкл/выкл
   clearScreen();
-  update();
+  display();
 }
 
 void LCD1202::writePixel (i8 x, i8 y, bool color) {
@@ -430,7 +430,7 @@ void LCD1202::simb10x16(i8 x, i8 y, bool color, i8 c){
 
 
 void LCD1202::customObj(i8 x, i8 y, bool color, i8 c){
-//  fillRect(x, y, 14, 12 , 0); update (); delay(200);
+//  fillRect(x, y, 14, 12 , 0); display (); delay(200);
   for (i8 k=0;k<2;k++){  //i8 row
     for (i8 i=0;i<12;i++){
       i8 line = pgm(&(mass10x10[c][i+k*12]));
@@ -440,7 +440,7 @@ void LCD1202::customObj(i8 x, i8 y, bool color, i8 c){
       }
     }
   }
- // update ();
+ // display ();
 }
 
 
@@ -477,7 +477,7 @@ void LCD1202::battery(u8 x, u8 y, u8 val, bool  charging){
        if(i <= 5) drawRect(j, y+2, 2, 7, 1);  
        else  drawFastVLine(x, y+4, 3, 1);     
      }
-     //  update ();
+     //  display ();
 }
 
 void LCD1202::signal(u8 x, u8 y, u8 value){
@@ -490,7 +490,7 @@ void LCD1202::signal(u8 x, u8 y, u8 value){
        for (int i = 10, j = x+7, k=-1 ; 
                i <= value; i+=20, j +=3, k-=2)
        drawRect(j, y+10, 2, k, 1);
-   //    update();
+   //    display();
 }
 
 void LCD1202::printLcd(char* message){
@@ -498,7 +498,7 @@ void LCD1202::printLcd(char* message){
      battery(78,0,90,0);
      signal(0,0,0);
      print (12, 30, 1, message); 
-     update (); 
+     display (); 
 }
 
 
