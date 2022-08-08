@@ -1,6 +1,6 @@
 // 8x5 Font ASCII 32 - 127 Implemented
 // Users can modify this to support more characters(glyphs)
-// BasicFont is placed in code memory.
+// BasicFont is placed in code memory
 
 // This font be freely used without any restriction(It is placed in public domain)
 #if defined(ARDUINO)
