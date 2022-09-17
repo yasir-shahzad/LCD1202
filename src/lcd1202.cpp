@@ -5,7 +5,7 @@
   and MOSI (DIN) pins. CS is still controlled by any IO pin. NOTE: MISO and SS
   will be set as an input and output respectively, so be careful sharing those
   pins!
-  @param dc_pin   DC pin
+  @param dc_pin   DC pin.
   @param cs_pin   CS pin
   @param rst_pin  RST pin
   @param theSPI   Pointer to SPIClass device for hardware SPI
