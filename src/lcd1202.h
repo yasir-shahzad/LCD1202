@@ -34,13 +34,9 @@
 #define u16 unsigned int
 #define u8  unsigned char
 
-#define LCD_X        96
-#define LCD_Y        68
+#define LCDWIDTH      96  ///< LCD is 94 pixels wide
+#define LCDHEIGHT     68  ///< 66 pixels high
 #define LCD_String    9
-
-
-#define LCDWIDTH   94   ///< LCD is 94 pixels wide
-#define LCDHEIGHT  66   ///< 66 pixels high
   
 #define SetYAddr   0xB0
 #define SetXAddr4  0x00
@@ -49,7 +45,7 @@
 #define LCD_D         1
 #define LCD_C         0
 
-i8 LCD_RAM[LCD_X * LCD_String];
+i8 LCD_RAM[LCDWIDTH * LCD_String];
 
 #define lcd1202_swap(a, b)                                                     \
   (((a) ^= (b)), ((b) ^= (a)), ((a) ^= (b))) ///< No-temp-var swap operation
