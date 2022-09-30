@@ -34,8 +34,8 @@
 #define u16 unsigned int
 #define u8  unsigned char
 
-#define LCDWIDTH      96  ///< LCD is 94 pixels wide
-#define LCDHEIGHT     68  ///< 66 pixels high
+#define LCDWIDTH      96  ///< LCD is 96 pixels wide
+#define LCDHEIGHT     68  ///< 68 pixels high
 #define LCD_String    9
   
 #define SetYAddr   0xB0
