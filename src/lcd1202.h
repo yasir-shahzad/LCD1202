@@ -3,12 +3,12 @@
 #define LCD1202_H
 //
 // LCD1202
-// Library for accessing the STE2007 128x96 LCD display
+// Library for accessing the STE2007 96x68 LCD display
 // Written by Yasir Shahzad (Yasirsahzad918@gmail.com)
 // Copyright (c) Yasir Shahazad.
 // Project started 6/15/2022
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
+// Licensed under the GPL License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //    http://www.apache.org/licenses/LICENSE-2.0
@@ -88,7 +88,7 @@ public:
   void signal (u8,u8,u8);
   void printLcd(char*);
 private:
-  volatile u8 _rstpin, _cspin, _dinpin, _sckpin;
+  const u8 _rstpin, _cspin, _dinpin, _sckpin;
   
   void sendChar(i8, i8);
 };
