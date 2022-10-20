@@ -17,60 +17,63 @@ LCD1202::LCD1202(u8 rst_pin, u8 cs_pin, u8 din_pin, u8 sclk_pin) {
     _sckpin  = sclk_pin;
 }
 
-  // Clear the screen in LCD1202 RAM
+// Clear the screen in LCD1202 RAM
 void LCD1202::clearScreen() {
-  int index;
-  for (index = 0; index < 864; index++) {
-    LCD_RAM[index] = (0x00);
-  }
+    int index;
+    for (index = 0; index < 864; index++)
+    {
+        LCD_RAM[index] = (0x00);
+    }
 }
 
 void LCD1202::sendChar(i8 mode, i8 c) {
-  digitalWrite(_cspin, 0);
-  (mode) ? digitalWrite(_dinpin, 1) : digitalWrite(_dinpin, 0);
-  digitalWrite(_sckpin, 1);
-
-  for (i8 i = 0; i < 8; i++) {
-    digitalWrite(_sckpin, 0);
-    (c & 0x80) ? digitalWrite(_dinpin, 1) : digitalWrite(_dinpin, 0);
+    digitalWrite(_cspin, 0);
+    (mode) ? digitalWrite(_dinpin, 1) : digitalWrite(_dinpin, 0);
     digitalWrite(_sckpin, 1);
-    c <<= 1;
-  }
 
-  digitalWrite(_sckpin, 0);
+    for (i8 i = 0; i < 8; i++)
+    {
+        digitalWrite(_sckpin, 0);
+        (c & 0x80) ? digitalWrite(_dinpin, 1) : digitalWrite(_dinpin, 0);
+        digitalWrite(_sckpin, 1);
+        c <<= 1;
+    }
+
+    digitalWrite(_sckpin, 0);
 }
 
 void LCD1202::display() {
-  for (i8 p = 0; p < 9; p++) {
-    sendChar(LCD_C, SetYAddr | p);
-    sendChar(LCD_C, SetXAddr4);
-    sendChar(LCD_C, SetXAddr3);
+    for (i8 p = 0; p < 9; p++)
+    {
+        sendChar(LCD_C, SetYAddr | p);
+        sendChar(LCD_C, SetXAddr4);
+        sendChar(LCD_C, SetXAddr3);
 
-    for (i8 col = 0; col < LCDWIDTH; col++) {
-      sendChar(LCD_D, LCD_RAM[(LCDWIDTH * p) + col]);
+        for (i8 col = 0; col < LCDWIDTH; col++) {
+            sendChar(LCD_D, LCD_RAM[(LCDWIDTH * p) + col]);
+        }
     }
-  }
 }
 
 void LCD1202::initialize() {
-  pinMode(_rstpin, OUTPUT);
-  pinMode(_cspin,  OUTPUT);
-  pinMode(_dinpin,  OUTPUT);
-  pinMode(_sckpin, OUTPUT);
+    pinMode(_rstpin, OUTPUT);
+    pinMode(_cspin, OUTPUT);
+    pinMode(_dinpin, OUTPUT);
+    pinMode(_sckpin, OUTPUT);
 
-  digitalWrite(_cspin,  LOW);
-  digitalWrite(_rstpin, HIGH);
-  digitalWrite(_sckpin, LOW);
-  digitalWrite(_dinpin,  LOW);
-  
-  delay(20);
-  digitalWrite(_cspin, 1);
+    digitalWrite(_cspin, LOW);
+    digitalWrite(_rstpin, HIGH);
+    digitalWrite(_sckpin, LOW);
+    digitalWrite(_dinpin, LOW);
 
-  sendChar(LCD_C,0x2F);            // Power control set(charge pump on/off)
-  sendChar(LCD_C,0xA4);   
-  sendChar(LCD_C,0xAF);           
-  clearScreen();
-  display();
+    delay(20);
+    digitalWrite(_cspin, 1);
+
+    sendChar(LCD_C, 0x2F); // Power control set(charge pump on/off)
+    sendChar(LCD_C, 0xA4);
+    sendChar(LCD_C, 0xAF);
+    clearScreen();
+    display();
 }
 
 void LCD1202::writePixel(i8 x, i8 y, bool color) {
