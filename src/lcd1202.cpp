@@ -20,8 +20,7 @@ LCD1202::LCD1202(u8 rst_pin, u8 cs_pin, u8 din_pin, u8 sclk_pin) {
 // Clear the screen in LCD1202 RAM
 void LCD1202::clearScreen() {
     int index;
-    for (index = 0; index < 864; index++)
-    {
+    for (index = 0; index < 864; index++) {
         LCD_RAM[index] = (0x00);
     }
 }
@@ -31,8 +30,7 @@ void LCD1202::sendChar(i8 mode, i8 c) {
     (mode) ? digitalWrite(_dinpin, 1) : digitalWrite(_dinpin, 0);
     digitalWrite(_sckpin, 1);
 
-    for (i8 i = 0; i < 8; i++)
-    {
+    for (i8 i = 0; i < 8; i++) {
         digitalWrite(_sckpin, 0);
         (c & 0x80) ? digitalWrite(_dinpin, 1) : digitalWrite(_dinpin, 0);
         digitalWrite(_sckpin, 1);
@@ -43,12 +41,11 @@ void LCD1202::sendChar(i8 mode, i8 c) {
 }
 
 void LCD1202::display() {
-    for (i8 p = 0; p < 9; p++)
-    {
+    for (i8 p = 0; p < 9; p++) {
         sendChar(LCD_C, SetYAddr | p);
         sendChar(LCD_C, SetXAddr4);
         sendChar(LCD_C, SetXAddr3);
-
+        
         for (i8 col = 0; col < LCDWIDTH; col++) {
             sendChar(LCD_D, LCD_RAM[(LCDWIDTH * p) + col]);
         }
@@ -166,20 +163,18 @@ void LCD1202::drawLine(i8 x0, i8 y0, i8 x1, i8 y1, bool color) {
 
 
 void LCD1202::drawFastVLine(i8 x, i8 y, i8 h, bool color) {
-  drawLine(x, y, x, y+h-1, color);
+    drawLine(x, y, x, y + h - 1, color);
 }
-
 
 void LCD1202::drawFastHLine(i8 x, i8 y, i8 w, bool color) {
-  drawLine(x, y, x+w-1, y, color);
+    drawLine(x, y, x + w - 1, y, color);
 }
 
-
 void LCD1202::drawRect(i8 x, i8 y, i8 w, i8 h, bool color) {
-  drawFastHLine(x, y, w, color);
-  drawFastHLine(x, y+h-1, w, color);
-  drawFastVLine(x, y, h, color);
-  drawFastVLine(x+w-1, y, h, color);
+    drawFastHLine(x, y, w, color);
+    drawFastHLine(x, y + h - 1, w, color);
+    drawFastVLine(x, y, h, color);
+    drawFastVLine(x + w - 1, y, h, color);
 }
 
 
