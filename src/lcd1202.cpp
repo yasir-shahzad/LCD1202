@@ -125,8 +125,8 @@ void LCD1202::print(i8 x, i8 y, bool color, char *str) {
 }
 
 void LCD1202::print(i8 x, i8 y, bool color, long num) {
-  char c[20];
-  print(x, y, color, ltoa(num, c, 10));
+    char c[20];
+    print(x, y, color, ltoa(num, c, 10));
 }
 
 void LCD1202::print_1607(i8 x, i8 y, bool color, char *str) {
