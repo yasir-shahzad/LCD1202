@@ -113,15 +113,15 @@ void LCD1202::drawChar(i8 x, i8 y, bool color, u8 c) {
 }
 
 void LCD1202::print(i8 x, i8 y, bool color, char *str) {
-  unsigned char type = *str;
-  if (type >= 128)
-    x = x - 3;
-  while (*str)
-  {
-    drawChar(x, y, color, *str++);
     unsigned char type = *str;
-    (type >= 128) ? x = x + 3 : x = x + 6;
-  }
+    if (type >= 128)
+        x = x - 3;
+    while (*str)
+    {
+        drawChar(x, y, color, *str++);
+        unsigned char type = *str;
+        (type >= 128) ? x = x + 3 : x = x + 6;
+    }
 }
 
 void LCD1202::print(i8 x, i8 y, bool color, long num) {
