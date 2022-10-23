@@ -189,37 +189,37 @@ void LCD1202::drawRect(i8 x, i8 y, i8 w, i8 h, bool color) {
 * Draw or clear a circle of radius r at x,y centre
 */
 void LCD1202::drawCircle(i8 x0, i8 y0, u16 r, bool color) {
-  int f = 1 - r;
-  int ddF_x = 1;
-  int ddF_y = -2 * r;
-  int x = 0;
-  int y = r;
+    int f = 1 - r;
+    int ddF_x = 1;
+    int ddF_y = -2 * r;
+    int x = 0;
+    int y = r;
 
-  writePixel(x0, y0 + r, color);
-  writePixel(x0, y0 - r, color);
-  writePixel(x0 + r, y0, color);
-  writePixel(x0 - r, y0, color);
+    writePixel(x0, y0 + r, color);
+    writePixel(x0, y0 - r, color);
+    writePixel(x0 + r, y0, color);
+    writePixel(x0 - r, y0, color);
 
-  while (x < y)
-  {
-    if (f >= 0)
+    while (x < y)
     {
-      y--;
-      ddF_y += 2;
-      f += ddF_y;
-    }
-    x++;
-    ddF_x += 2;
-    f += ddF_x;
+        if (f >= 0)
+        {
+            y--;
+            ddF_y += 2;
+            f += ddF_y;
+        }
+        x++;
+        ddF_x += 2;
+        f += ddF_x;
 
-    writePixel(x0 + x, y0 + y, color);
-    writePixel(x0 - x, y0 + y, color);
-    writePixel(x0 + x, y0 - y, color);
-    writePixel(x0 - x, y0 - y, color);
-    writePixel(x0 + y, y0 + x, color);
-    writePixel(x0 - y, y0 + x, color);
-    writePixel(x0 + y, y0 - x, color);
-    writePixel(x0 - y, y0 - x, color);
+        writePixel(x0 + x, y0 + y, color);
+        writePixel(x0 - x, y0 + y, color);
+        writePixel(x0 + x, y0 - y, color);
+        writePixel(x0 - x, y0 - y, color);
+        writePixel(x0 + y, y0 + x, color);
+        writePixel(x0 - y, y0 + x, color);
+        writePixel(x0 + y, y0 - x, color);
+        writePixel(x0 - y, y0 - x, color);
   }
 }
 
