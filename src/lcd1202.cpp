@@ -45,7 +45,7 @@ void LCD1202::display() {
         sendChar(LCD_C, SetYAddr | p);
         sendChar(LCD_C, SetXAddr4);
         sendChar(LCD_C, SetXAddr3);
-        
+
         for (i8 col = 0; col < LCDWIDTH; col++) {
             sendChar(LCD_D, LCD_RAM[(LCDWIDTH * p) + col]);
         }
@@ -84,29 +84,32 @@ void LCD1202::writePixel(i8 x, i8 y, bool color) {
 }
 
 void LCD1202::fillScreen(bool color) {
-  fillRect(0, 0, LCDWIDTH, LCDHEIGHT, color);
+    fillRect(0, 0, LCDWIDTH, LCDHEIGHT, color);
 }
 
-
 void LCD1202::drawChar(i8 x, i8 y, bool color, u8 c) {
+    if ((x >= LCDWIDTH) || (y >= LCDHEIGHT) || ((x + 4) < 0) || ((y + 7) < 0))
+        return;
 
-  if((x >= LCDWIDTH) ||(y >= LCDHEIGHT) || ((x + 4) < 0) || ((y + 7) < 0))
-    return;
+    if (c < 128)
+        c = c - 32;
+    if (c >= 144 && c <= 175)
+        c = c - 48;
+    if (c >= 128 && c <= 143)
+        c = c + 16;
+    if (c >= 176 && c <= 191)
+        c = c - 48;
+    if (c > 191)
+        return;
 
-  if(c<128)            c = c-32;
-  if(c>=144 && c<=175) c = c-48;
-  if(c>=128 && c<=143) c = c+16;
-  if(c>=176 && c<=191) c = c-48;
-  if(c>191)  return;
-
-  for (i8 i=0; i<6; i++ ) {
-    i8 line;
-    (i == 5)? line = 0x0 : line = pgm(BasicFont+(c*5)+i);
-    for (i8 j = 0; j<8; j++) {
-      (line & 0x1)? writePixel(x+i, y+j, color) : writePixel(x+i, y+j, !color);
-      line >>= 1;
+    for (i8 i = 0; i < 6; i++) {
+        i8 line;
+        (i == 5) ? line = 0x0 : line = pgm(BasicFont + (c * 5) + i);
+        for (i8 j = 0; j < 8; j++) {
+            (line & 0x1) ? writePixel(x + i, y + j, color) : writePixel(x + i, y + j, !color);
+            line >>= 1;
+        }
     }
-  }
 }
 
 void LCD1202::print(i8 x, i8 y, bool color, char *str) {
