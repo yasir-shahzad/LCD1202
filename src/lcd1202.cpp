@@ -130,9 +130,9 @@ void LCD1202::print(i8 x, i8 y, bool color, long num) {
 }
 
 void LCD1202::print_1607(i8 x, i8 y, bool color, char *str) {
-  i8 nPos[16] = {0, 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72, 78, 84, 90};
-  i8 nStr[7] = {1, 10, 20, 30, 40, 50, 60};
-  print(nPos[x], nStr[y], color, str);
+    i8 nPos[16] = {0, 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72, 78, 84, 90};
+    i8 nStr[7] = {1, 10, 20, 30, 40, 50, 60};
+    print(nPos[x], nStr[y], color, str);
 }
 
 void LCD1202::drawLine(i8 x0, i8 y0, i8 x1, i8 y1, bool color) {
