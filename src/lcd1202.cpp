@@ -136,34 +136,33 @@ void LCD1202::print_1607(i8 x, i8 y, bool color, char *str) {
 }
 
 void LCD1202::drawLine(i8 x0, i8 y0, i8 x1, i8 y1, bool color) {
-  int steep = abs(y1 - y0) > abs(x1 - x0);
-  if (steep) {
-    lcd1202_swap(x0, y0);
-    lcd1202_swap(x1, y1);
-  }
-  if (x0 > x1) {
-    lcd1202_swap(x0, x1);
-    lcd1202_swap(y0, y1);
-  }
-  int dx, dy;
-  dx = x1 - x0;
-  dy = abs(y1 - y0);
-
-  int err = dx / 2;
-  int ystep;
-
-  (y0 < y1)?  ystep = 1 : ystep = -1;
-
-  for (; x0<=x1; x0++) {
-    (steep)? writePixel(y0, x0, color) : writePixel(x0, y0, color);
-    err -= dy;
-    if (err < 0) {
-      y0 += ystep;
-      err += dx;
+    int steep = abs(y1 - y0) > abs(x1 - x0);
+    if (steep) {
+        lcd1202_swap(x0, y0);
+        lcd1202_swap(x1, y1);
     }
-  }
-}
+    if (x0 > x1) {
+        lcd1202_swap(x0, x1);
+        lcd1202_swap(y0, y1);
+    }
+    int dx, dy;
+    dx = x1 - x0;
+    dy = abs(y1 - y0);
 
+    int err = dx / 2;
+    int ystep;
+
+    (y0 < y1) ? ystep = 1 : ystep = -1;
+
+    for (; x0 <= x1; x0++) {
+        (steep) ? writePixel(y0, x0, color) : writePixel(x0, y0, color);
+        err -= dy;
+        if (err < 0) {
+            y0 += ystep;
+            err += dx;
+        }
+    }
+}
 
 void LCD1202::drawFastVLine(i8 x, i8 y, i8 h, bool color) {
     drawLine(x, y, x, y + h - 1, color);
