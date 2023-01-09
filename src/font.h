@@ -4,9 +4,9 @@
 
 // This font be freely used without any restriction(It is placed in public domain)
 #if defined(ARDUINO)
-const unsigned char BasicFont[][5] PROGMEM =
+const uint8_t BasicFont[][5] PROGMEM =
 #else
-const unsigned char BasicFont[][5] =
+const uint8_t BasicFont[][5] =
 #endif
     {
         {0x00, 0x00, 0x00, 0x00, 0x00}, // 0x20   space

@@ -55,9 +55,9 @@ public:
   void display();
   void writePixel(char, char, bool);
   void fillScreen(bool);
-  void drawChar(char, char, bool, unsigned char);
+  void drawChar(char, char, bool, uint8_t);
   void print(char, char, bool, char*);
-  void print(char, char, bool, long);
+  void print(char, char, bool, int32_t);
   void print_1607(char, char, bool, char*);
   void drawLine(char, char, char, char, bool);
   void drawFastVLine(char, char, char, bool);
