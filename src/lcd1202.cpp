@@ -442,7 +442,7 @@ void LCD1202::customObj(char x, char y, bool color, char c) {
 
 void LCD1202::battery(uint8_t x, uint8_t y, uint8_t val, bool charging) {
   static bool chrg_cyc = true; // charging cycle
-  static uint8_t b_val;             // battery value(0 100%)
+  static uint8_t b_val;       // battery value(0 100%)
 
   if (charging)
   {
@@ -482,6 +482,8 @@ void LCD1202::battery(uint8_t x, uint8_t y, uint8_t val, bool charging) {
   }
   //  display ();
 }
+
+
 
 void LCD1202::signal(uint8_t x, uint8_t y, uint8_t value) {
   //   fillRect(x, y, 15, 12 , 0); //clear the lcd
